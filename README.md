@@ -33,7 +33,7 @@ Used when a internal event is done on a process.
 before producing an internal event:
 
 ```math
-C_i[i,i] <- C_i[i,i] + 1
+C_i[i,i] \gets C_i[i,i] + 1
 ```
 
 #### Sending rule
@@ -41,8 +41,11 @@ C_i[i,i] <- C_i[i,i] + 1
 when sending a message m to P_j:
 
 ```math
-C_i[i,i] <- C_i[i,i] + 1
-send(m, C_i) to P_j
+\begin{align*}
+C_i[i,i] \gets C_i[i,i] + 1
+\newline
+send(m, C_i) \space to \space P_j
+\end{align*}
 ```
 
 #### Receiving rule
@@ -50,12 +53,18 @@ send(m, C_i) to P_j
 when receiving a message (m, C) from P_j:
 
 ```math
-C_i[i,i] <- C_i[i,i] + 1
-C_i[i,*] <- max(C_i[i,*], C[i,*])
-
-for each k do
-    C_i[k,*] <- max(C_i[k,*], C[k,*])
+\begin{align*}
+C_i[i,i] \gets C_i[i,i] + 1
+\newline
+C_i[i,*] \gets max(C_i[i,*], C[i,*])
+\newline
+\newline
+for \space each \space k \space do
+\newline
+C_i[k,*] \gets max(C_i[k,*], C[k,*]) \quad
+\newline
 endfor
+\end{align*}
 ```
 
 

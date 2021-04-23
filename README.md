@@ -40,35 +40,22 @@ C_i[i,i] \gets C_i[i,i] + 1
 
 when sending a message m to P_j:
 
-```math
-\begin{align*}
-C_i[i,i] \gets C_i[i,i] + 1
-\newline
-send(m, C_i) \space to \space P_j
-\end{align*}
-```
+$C_i[i,i] \gets C_i[i,i] + 1$
+$send(m, C_i) \space to \space P_j$
 
 #### Receiving rule
 
 when receiving a message (m, C) from P_j:
 
-```math
-\begin{align*}
-C_i[i,i] \gets C_i[i,i] + 1
-\newline
-C_i[i,*] \gets max(C_i[i,*], C[i,*])
-\newline
-\newline
-for \space each \space k \space do
-\newline
-C_i[k,*] \gets max(C_i[k,*], C[k,*]) \quad
-\newline
-endfor
-\end{align*}
-```
+$C_i[i,i] \gets C_i[i,i] + 1$
 
+$C_i[i,*] \gets max(C_i[i,*], C[i,*])$
 
+$for \space each \space k \space do$
 
+$\quad C_i[k,*] \gets max(C_i[k,*], C[k,*])$
+
+$endfor$
 
 ## Sujet
 

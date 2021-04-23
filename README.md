@@ -32,30 +32,28 @@ Used when a internal event is done on a process.
 
 before producing an internal event:
 
-```math
-C_i[i,i] \gets C_i[i,i] + 1
-```
+$` C_i[i,i] \gets C_i[i,i] +  1 `$
 
 #### Sending rule
 
-when sending a message m to P_j:
+when sending a message $`m`$ to $`P_j`$:
 
-$C_i[i,i] \gets C_i[i,i] + 1$
-$send(m, C_i) \space to \space P_j$
+$` C_i[i,i] \gets C_i[i,i] + 1 `$
+$` send(m, C_i) \space to \space P_j `$
 
 #### Receiving rule
 
-when receiving a message (m, C) from P_j:
+when receiving a message ($`m`$, $`C`$) from $`P_j`$:
 
-$C_i[i,i] \gets C_i[i,i] + 1$
+$` C_i[i,i] \gets C_i[i,i] + 1 `$
 
-$C_i[i,*] \gets max(C_i[i,*], C[i,*])$
+$` C_i[i,*] \gets max(C_i[i,*], C[i,*]) `$
 
-$for \space each \space k \space do$
+$` for \space each \space k \space do `$
 
-$\quad C_i[k,*] \gets max(C_i[k,*], C[k,*])$
+$` \quad C_i[k,*] \gets max(C_i[k,*], C[k,*]) `$
 
-$endfor$
+$` endfor `$
 
 ## Sujet
 

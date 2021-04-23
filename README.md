@@ -54,7 +54,7 @@ $` \qquad C_i[k,*] \gets max(C_i[k,*], C[k,*]) `$
 
 $` endfor `$
 
-## Sujet (FR)
+## Assignment (FR)
 
 L'objectif de ce mini-projet est d'implémenter en Erlang l'estampillage matricielle vu en cours et en TD, afin de synchroniser la communication au sein d'un ensemble de processus distribués.
 

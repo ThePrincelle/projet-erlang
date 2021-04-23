@@ -1,8 +1,8 @@
 # Erlang project
 
-Module simulating processes exchanging messages with matrix clocks
+Module simulating processes exchanging messages with matrix clocks.
 
-Author: Maxime Princelle
+Author: [Maxime Princelle](https://contact.princelle.org)
 
 <br/>
 
@@ -14,7 +14,27 @@ Author: Maxime Princelle
 
 ## How to make it work?
 
-xxx
+You need to have Erlang installed on your system.
+
+### Compile
+
+To compile the code, run:
+
+```sh
+./compile
+```
+
+### Run
+
+To run the provided test, enter:
+
+```sh
+./run N
+```
+
+Here, _N_ is the number of processes you want to simulate.
+
+The test simply sends messages between the N processes.
 
 ## Automated testing
 

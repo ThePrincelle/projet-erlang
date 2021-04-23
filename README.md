@@ -50,7 +50,7 @@ $` C_i[i,*] \gets max(C_i[i,*], C[i,*]) `$
 
 $` for \space each \space k \space do: `$
 
-$` \quad C_i[k,*] \gets max(C_i[k,*], C[k,*]) `$
+$` \qquad C_i[k,*] \gets max(C_i[k,*], C[k,*]) `$
 
 $` endfor `$
 

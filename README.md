@@ -32,29 +32,31 @@ Used when a internal event is done on a process.
 
 before producing an internal event:
 
-$$C_i[i,i] <- C_i[i,i] + 1$$
+```math
+C_i[i,i] <- C_i[i,i] + 1
+```
 
 #### Sending rule
 
 when sending a message m to P_j:
 
-$$C_i[i,i] <- C_i[i,i] + 1$$
-
-$$send(m, C_i) to P_j$$
+```math
+C_i[i,i] <- C_i[i,i] + 1
+send(m, C_i) to P_j
+```
 
 #### Receiving rule
 
 when receiving a message (m, C) from P_j:
 
-$$C_i[i,i] <- C_i[i,i] + 1$$
+```math
+C_i[i,i] <- C_i[i,i] + 1
+C_i[i,*] <- max(C_i[i,*], C[i,*])
 
-$$C_i[i,*] <- max(C_i[i,*], C[i,*])$$
-
-$$for each k do$$
-
-$$C_i[k,*] <- max(C_i[k,*], C[k,*])$$
-
-$$endfor$$
+for each k do
+    C_i[k,*] <- max(C_i[k,*], C[k,*])
+endfor
+```
 
 
 

@@ -96,10 +96,12 @@ clockRowSync(Idx1, Idx2, Clock1, Clock2) ->
 % (lists have to be the same size)
 % - Clock1: first Clock
 % - Clock2: second Clock
-clockSync_do(0, Clock1, Clock2) -> 
-    clockRowSync(0, 0, Clock1, Clock2).
 clockSync_do(Idx, Clock1, Clock2) ->
-    clockSync_do(Idx-1, clockRowSync(Idx, Idx, Clock1, Clock2), Clock2).
+    if
+        (Idx == 0) -> clockRowSync(0, 0, Clock1, Clock2);
+        (Idx > 0) -> clockSync_do(Idx-1, clockRowSync(Idx, Idx, Clock1, Clock2), Clock2);
+        (Idx < 0) -> error
+    end.
 clockSync(Clock1, Clock2) ->
     if
         (length(Clock1) == length(Clock2)) -> clockSync_do(length(Clock1)-1, Clock1, Clock2);
@@ -203,7 +205,7 @@ site(Idx, Clock, Step, Iteration) ->
                     {Message,Sender} -> 
                         io:format("~nProcess= p~p : Receiving a message from p~p => ~n", [Idx, Sender]),
                         printClock(Message),
-                        Clock2= messageToReceive(Idx, Clock, Message),
+                        Clock2 = messageToReceive(Idx, Clock, Sender, Message),
                         io:format("~nProcess= p~p : Clock after receiving message from (p~p) = ~n", [Idx, Sender]),
                         printClock(Clock2),
                         site(Idx, Clock2, 2, Iteration+1) % Recall the method to receive any other messages (Step stays the same, but we increment Iteration)

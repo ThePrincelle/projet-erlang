@@ -1,5 +1,7 @@
 # Erlang project
 
+[![Build Status](https://drone.princelle.org/api/badges/princelle/project-erlang/status.svg)](https://drone.princelle.org/princelle/project-erlang)
+
 Module simulating processes exchanging messages with matrix clocks.
 
 Author: [Maxime Princelle](https://contact.princelle.org)
@@ -38,7 +40,11 @@ The test simply sends messages between the N processes.
 
 ## Automated testing
 
-xxx
+[![Build Status](https://drone.princelle.org/api/badges/princelle/project-erlang/status.svg)](https://drone.princelle.org/princelle/project-erlang)
+
+Every time a push is made to the repository, a test is automatically executed to verify that the Erlang script still passes through the compiler.
+
+Here's the link to the CI tester : https://drone.princelle.org/princelle/project-erlang
 
 ## How does it work?
 

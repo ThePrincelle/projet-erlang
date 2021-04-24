@@ -194,7 +194,7 @@ site(Idx, Clock, Step, Iteration) ->
                 ) ->
                 receive % Receive message from process
                     {Message, Sender} -> 
-                        io:format("~nProcess= p~p : Receiving a message from process= p~p => ( ~w )~n", [Idx, Sender, Message]),
+                        io:format("~nProcess= p~p : Receiving a message from process= p~p => ( ~w )~n  -> p~p current Clock: ( ~w )~n", [Idx, Sender, Message, Idx, Clock]),
                         % io:format("~nProcess= p~p : Clock after receiving message from (p~p) = ~n~w~n", [Idx, Sender, Clock2]),
                         site(Idx, messageToReceive(Idx, Clock, Sender, Message), 1, Iteration+1) % Recall the method to receive any other messages (Step stays the same, but we increment Iteration)
                 end;
@@ -214,7 +214,7 @@ site(Idx, Clock, Step, Iteration) ->
                 ) ->
                 receive
                     {Message, Sender} -> 
-                        io:format("~nProcess= p~p : Receiving a message from process= p~p => ( ~w )~n", [Idx, Sender, Message]),
+                        io:format("~nProcess= p~p : Receiving a message from process= p~p => ( ~w )~n  -> p~p current Clock: ( ~w )~n", [Idx, Sender, Message, Idx, Clock]),
                         % io:format("~nProcess= p~p : Clock after receiving message from (p~p) = ~n~w~n", [Idx, Sender, Clock2]),
                         site(Idx, messageToReceive(Idx, Clock, Sender, Message), 2, Iteration+1) % Recall the method to receive any other messages (Step stays the same, but we increment Iteration)
                 end;

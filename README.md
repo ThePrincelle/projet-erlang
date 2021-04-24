@@ -23,15 +23,16 @@ You need to have Erlang installed on your system.
 To compile the code, run:
 
 ```sh
-./compile
+erlc matrix_clocks.erl
 ```
 
 ### Run
 
 To run the provided test, enter:
 
-```sh
-./run N
+```erlang
+erl
+matrix_clocks:test(N).
 ```
 
 Here, _N_ is the number of processes you want to simulate.

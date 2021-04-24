@@ -1,9 +1,14 @@
 % Module simulating processes exchanging messages with matrix clocks
 % Created by Maxime Princelle, M1 SIL
+%
+% The included test separates 'even' sites to 'uneven' ones:
+% - All the 'even' sites receive a message from every 'uneven' ones then send back a message to each of them.
+% - All the 'uneven' sites send a message to each 'even' sites then receive a message from each of them.
+%
 % --------------------------------------------
 
---module(matrix_clocks)
-
+-module(matrix_clocks).
+-export([test/1, site/4, rowMax/2]).
 
 % Function generating and saving a pI process
 % Idx : number to attribute to the process (>= 1)
@@ -16,8 +21,6 @@ initSite(Idx, N) when (Idx < N + 1)->
     initSite(Idx+1,N);
 initSite(Idx, N) when (Idx >= N + 1) ->
     ok.
-initSite(N) when (N < 2) ->
-    error.
 initSite(N) ->
     initSite(1,N).
 
@@ -85,7 +88,7 @@ clockRowSync(Idx1, Idx2, Clock1, Clock2) ->
         (Idx1 < length(Clock1)) -> lists:sublist(Clock1, Idx1-1) ++ [rowMax(lists:nth(Idx1, Clock1), lists:nth(Idx2, Clock2))] ++ lists:nthtail(Idx1, Clock1);
         (Idx1 == length(Clock1)) -> lists:sublist(Clock1, Idx1-1) ++ [rowMax(lists:nth(Idx1, Clock1), lists:nth(Idx2, Clock2))];
         (length(Clock1) > 1) -> error;
-        (length(Clock1) /= length(Clock2)) -> error;
+        (length(Clock1) /= length(Clock2)) -> error
     end. % Return the updated Clock
 
 
@@ -94,15 +97,22 @@ clockRowSync(Idx1, Idx2, Clock1, Clock2) ->
 % - Clock1: first Clock
 % - Clock2: second Clock
 clockSync_do(0, Clock1, Clock2) -> 
-    clockRowSync(0, 0, Clock1, Clock2)
+    clockRowSync(0, 0, Clock1, Clock2).
 clockSync_do(Idx, Clock1, Clock2) ->
-    clockSync_do(Idx-1, clockRowSync(Idx, Idx, Clock1, Clock2), Clock2)
+    clockSync_do(Idx-1, clockRowSync(Idx, Idx, Clock1, Clock2), Clock2).
 clockSync(Clock1, Clock2) ->
     if
         (length(Clock1) == length(Clock2)) -> clockSync_do(length(Clock1)-1, Clock1, Clock2);
         (length(Clock1) /= length(Clock2)) -> error;
-        (length(Clock1) > 1) -> error;
+        (length(Clock1) > 1) -> error
     end. % Return the updated Clock
+
+
+% Updates the Clock for an internal event
+% - Site: Idx of the process on which the event is made
+% - SiteClock: Clock of the process on which the event is made
+internalEvent(Site, SiteClock) ->
+    incrementClock(Site, SiteClock). % Increment the process clock
 
 
 % Prepares and returns the Clock of the message to send
@@ -119,6 +129,103 @@ messageToSend(From, FromClock) ->
 % - Message: Clock of the process from which the message is sent
 messageToReceive(Receiver, ReceiverClock, Sender, Message) ->
     ReClock = incrementClock(Receiver, ReceiverClock), % Increment the receiver clock
-    ReClock = clockRowSync(Receiver, Sender, ReClock, Message); % Update the receiver clock
+    ReClock = clockRowSync(Receiver, Sender, ReClock, Message), % Update the receiver clock
     clockSync(ReClock, Message). % Sync the receiver clock
 
+
+% Prints a List in the console
+% - List: list to display
+printList(List) ->
+    erlang:display("["),
+    lists:foreach(fun(Y) -> erlang:display(Y) end, List),
+    erlang:display("]").
+
+
+% Prints a Clock in the console
+% - Clock: Clock to display
+printClock(Clock) ->
+    lists:foreach(fun(Y) -> printList(Y) end, Clock).
+
+
+% Function that sets the flow for a process
+% - Idx: index given to the process
+% - Clock: matrix clock of the process
+% - Step: defines the step (1 or 2) of the simulation to determine if the process will send or receive messages
+% - Iteration: defines the current iteration for the given Step, this allows us to count the messages sent and received. Also, it allows us to respect the simulated procedure and determine to which process send a message
+site(Idx, Clock, Step, Iteration) ->
+    % Clock at the begining.
+    io:format("~nProcess= p~p : Clock= ~n",[Idx]), 
+    printClock(Clock),
+    if
+        % Uneven processes send a message to all even processes...
+        (Step == 1) and (Idx rem 2 == 1) and (Iteration*2 =< length(Clock))  ->
+            Message = messageToSend(Idx, Clock),
+            io:format("~nProcess= p~p : Sending a message to process= p~p : ~n", [Idx, Iteration*2]),
+            printClock(Message),
+            list_to_atom("p"++integer_to_list(Iteration*2)) ! {Message, Idx}, % Sending message to even process
+            site(Idx, Message, 1, Iteration+1); % Recall the method to send any other messages (Step stays the same, but we increment Iteration)
+
+        % Done with Step 1 for the uneven processes
+        (Step == 1) and (Idx rem 2 == 1) and (Iteration*2 > length(Clock))  ->
+            io:format("~nProcess= p~p : Done with sending all messages, passing to receiving step...~n", [Idx]),
+            printClock(Clock),
+            site(Idx, Clock,2, 1); % We go to Step 2 and reset the Iteration value
+
+        % Even processes receive a message from each uneven ones...
+        (Step == 1) and (Idx rem 2 == 0)
+            and (      ((Iteration =< length(Clock)/2) and (length(Clock) rem 2 == 0)) % Size 'even'
+                    or ((Iteration =< (length(Clock)+1)/2) and (length(Clock) rem 2 == 1)) % Size 'uneven'
+                ) ->
+                receive % Receive message from process
+                    {Message, Sender} -> 
+                        io:format("~nProcess= p~p : Receiving a message from process= p~p => ~n", [Idx, Sender]),
+                        printClock(Message),
+                        Clock2 = messageToReceive(Idx, Clock, Sender, Message),
+                        io:format("~nProcess= p~p : Clock after receiving message from (p~p) = ~n", [Idx, Sender]),
+                        printClock(Clock2),
+                        site(Idx, Clock2, 1, Iteration+1) % Recall the method to receive any other messages (Step stays the same, but we increment Iteration)
+                end;
+
+        % Done with Step 1 for even processes
+        (Step == 1) and (Idx rem 2 == 0)
+            and (      ((Iteration =< length(Clock)/2) and (length(Clock) rem 2 == 0)) % Size 'even'
+                    or ((Iteration =< (length(Clock)+1)/2) and (length(Clock) rem 2 == 1)) % Size 'uneven'
+                ) ->
+                io:format("~nProcess= p~p : All messages were received, now sending back...~n",[Idx]),
+                site(Idx, Clock, 2, 1); % We go to Step 2 and reset the Iteration value
+
+        % After the Step 1, all 'uneven' processes receive a message from each 'even' ones.
+        (Step == 2)  and (Idx rem 2 == 1)
+            and (      ((Iteration =< length(Clock)/2) and (length(Clock) rem 2 == 0)) % Size 'even'
+                    or ((Iteration =< (length(Clock)+1)/2) and (length(Clock) rem 2 == 1)) % Size 'uneven'
+                ) ->
+                receive
+                    {Message,Sender} -> 
+                        io:format("~nProcess= p~p : Receiving a message from p~p => ~n", [Idx, Sender]),
+                        printClock(Message),
+                        Clock2= messageToReceive(Idx, Clock, Message),
+                        io:format("~nProcess= p~p : Clock after receiving message from (p~p) = ~n", [Idx, Sender]),
+                        printClock(Clock2),
+                        site(Idx, Clock2, 2, Iteration+1) % Recall the method to receive any other messages (Step stays the same, but we increment Iteration)
+                end;
+
+        % After the Step 1, every 'even' processes send a message to each 'uneven' ones.
+        (Step == 2) and (Idx rem 2 == 0) and (Iteration*2-1 =< length(Clock))  ->
+            Message = messageToSend(Idx, Clock),
+            io:format("~nProcess= p~p : Sending a message to p~p : ~n", [Idx, Iteration*2-1]),
+            printClock(Message),
+            list_to_atom("p"++integer_to_list(Iteration*2-1)) ! {Message, Idx}, % We send messages to 'uneven' processes
+            site(Idx, Message, 2, Iteration+1); % Recall the method to send any other messages (Step stays the same, but we increment Iteration)
+
+        % Site is done with it's tasks, stopping itself.
+        true -> true
+    end.
+
+
+% Test function for the simulator, N is the number of processes to run.
+test(N) ->
+    % This included test separates 'even' sites to 'uneven' ones:
+    % - All the 'even' sites receive a message from every 'uneven' ones then send back a message to each of them.
+    % - All the 'uneven' sites send a message to each 'even' sites then receive a message from each of them.
+    io:format("In this test, there will be ~p procceses.~nWe separate 'even' ones from 'uneven' ones.~nTheir flow is predefined like this:~n- All the 'even' sites receive a message from every 'uneven' ones then send back a message to each of them.~n- All the 'uneven' sites send a message to each 'even' sites then receive a message from each of them.~n",[N]),
+    initSite(N).

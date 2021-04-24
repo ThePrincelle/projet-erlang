@@ -227,7 +227,7 @@ site(Idx, Clock, Step, Iteration) ->
             site(Idx, Message, 2, Iteration+1); % Recall the method to send any other messages (Step stays the same, but we increment Iteration)
 
         % Site is done with it's tasks, stopping itself.
-        true -> io:format("~nDone with process p~p~n", [Idx]), true
+        true -> io:format("~nProcess p~p is done.~n", [Idx]), true
     end.
 
 

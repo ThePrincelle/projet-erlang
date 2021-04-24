@@ -85,27 +85,39 @@ rowMax(List1, List2) when (length(List1) > 1) and (length(List1) == length(List2
 % > Operation: C_i[i,*] <- max(C_i[i,*], C_j[j,*])
 clockRowSync(Idx1, Idx2, Clock1, Clock2) ->
     if
-        (Idx1 == 1) -> rowMax(lists:nth(1, Clock1), lists:nth(Idx2, Clock2)) ++ lists:nthtail(1, Clock1);
-        (Idx1 < length(Clock1)) -> lists:sublist(Clock1, Idx1-1) ++ rowMax(lists:nth(Idx1, Clock1), lists:nth(Idx2, Clock2)) ++ lists:nthtail(Idx1, Clock1);
-        (Idx1 == length(Clock1)) -> lists:sublist(Clock1, Idx1-1) ++ rowMax(lists:nth(Idx1, Clock1), lists:nth(Idx2, Clock2));
-        (length(Clock1) /= length(Clock2)) -> io:format("~nError: (clockRowSync) Invalid sizes (Clocks have to be the same size).~n Details:~n  Clock1=(~w)~n  Clock2=(~w)~n", [Clock1, Clock2]), error
+        (Idx1 == 1) -> 
+            [lists:flatten([rowMax(lists:nth(1, Clock1), lists:nth(1, Clock2))])] ++ lists:sublist(Clock1, Idx1+1, length(Clock1));
+        (Idx1 < length(Clock1)) -> 
+            lists:sublist(Clock1, Idx1-1) ++ [lists:flatten([rowMax(lists:nth(Idx1, Clock1), lists:nth(Idx2, Clock2))])] ++ lists:sublist(Clock1, Idx1+1, length(Clock1));
+        (Idx1 == length(Clock1)) -> 
+            lists:sublist(Clock1, Idx1-1) ++ [lists:flatten([rowMax(lists:nth(Idx1, Clock1), lists:nth(Idx2, Clock2))])];
+        (length(Clock1) /= length(Clock2)) -> 
+            io:format("~nError: (clockRowSync) Invalid sizes (Clocks have to be the same size).~n Details:~n  Clock1=(~w)~n  Clock2=(~w)~n", [Clock1, Clock2]), error
     end. % Return the updated Clock
 
 
-% Returns a Clock with the max values
-% (lists have to be the same size)
+% Returns a Clock with the max values between two of them
+% (Clocks have to be the same size)
 % - Clock1: first Clock
 % - Clock2: second Clock
 clockSync_do(Idx, Clock1, Clock2) ->
     if
-        (Idx == 0) -> clockRowSync(0, 0, Clock1, Clock2);
-        (Idx > 0) -> clockSync_do(Idx-1, clockRowSync(Idx, Idx, Clock1, Clock2), Clock2);
-        (Idx < 0) -> io:format("~nError: (clockSync_do) Invalid Idx.~n Details:~n  Idx=(~p)~n~n  Clock1=(~w)~n  Clock2=(~w)~n", [Idx, Clock1, Clock2]), error
+        (Idx == 1) -> 
+            % io:format("~nclockSync_do~nDetails:~n  Idx=~p~n  Clock1=(~w)~n  Clock2=(~w)~n", [Idx, Clock1, Clock2]), 
+            clockRowSync(1, 1, Clock1, Clock2);
+        (Idx > 1) -> 
+            % io:format("~nclockSync_do~nDetails:~n  Idx=~p~n  Clock1=(~w)~n  Clock2=(~w)~n", [Idx, Clock1, Clock2]), 
+            clockSync_do(Idx-1, clockRowSync(Idx, Idx, Clock1, Clock2), Clock2);
+        (Idx < 1) -> 
+            io:format("~nError: (clockSync_do) Invalid Idx.~n Details:~n  Idx=~p~n  Clock1=(~w)~n  Clock2=(~w)~n", [Idx, Clock1, Clock2]), error
     end.
 clockSync(Clock1, Clock2) ->
     if
-        (length(Clock1) == length(Clock2)) -> clockSync_do(length(Clock1), Clock1, Clock2);
-        (length(Clock1) /= length(Clock2)) -> io:format("~nError: (clockSync) Invalid sizes (Clocks have to be the same size).~n Details:~n  Clock1=(~w)~n  Clock2=(~w)~n", [Clock1, Clock2]), error
+        (length(Clock1) == length(Clock2)) -> 
+            clockSync_do(length(Clock1), Clock1, Clock2);
+        (length(Clock1) /= length(Clock2)) -> 
+            io:format("~nError: (clockSync) Invalid sizes (Clocks have to be the same size).~n Details:~n  Clock1=(~w)~n  Clock2=(~w)~n", [Clock1, Clock2]), 
+            error
     end. % Return the updated Clock
 
 
@@ -129,7 +141,14 @@ messageToSend(From, FromClock) ->
 % - Sender: Idx of the process from which the message is sent
 % - Message: Clock of the process from which the message is sent
 messageToReceive(Receiver, ReceiverClock, Sender, Message) ->
-    clockSync(clockRowSync(Receiver, Sender, incrementClock(Receiver, ReceiverClock), Message), Message). % Increment and Update the receiver clock, then Sync it
+    % Increment and Update the receiver clock, then Sync it
+    %io:format("~nmessageToReceive~nDetails:~n  Receiver=~p~n  ReceiverClock=(~w)~n  Sender=~p~n  Message=(~w)~n", [Receiver, ReceiverClock, Sender, Message]),
+    ReceiverClockIncremented=incrementClock(Receiver, ReceiverClock),
+    %io:format("  ReceiverClockIncremented=(~w)~n", [ReceiverClockIncremented]),
+    ReceiverClockSynced=clockRowSync(Receiver, Sender, ReceiverClockIncremented, Message),
+    %io:format("  ReceiverClockSynced=(~w)~n", [ReceiverClockSynced]),
+    %io:format("  Message=(~w)~n", [Message]),
+    clockSync(ReceiverClockSynced, Message).
 
 
 % % Prints a List in the console
@@ -165,7 +184,7 @@ site(Idx, Clock, Step, Iteration) ->
 
         % Done with Step 1 for the uneven processes
         (Step == 1) and (Idx rem 2 == 1) and (Iteration*2 > length(Clock)) ->
-            io:format("~nProcess= p~p : All messages sent, passing to receiving step...~n Current Clock = ~w~n", [Idx, Clock]),
+            io:format("~nProcess= p~p : All messages sent, passing to receiving mode...~n Current Clock = ~w~n", [Idx, Clock]),
             site(Idx, Clock, 2, 1); % We go to Step 2 and reset the Iteration value
 
         % Even processes receive a message from each uneven ones...

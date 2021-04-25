@@ -37,7 +37,7 @@ matrix_clocks:test(N).
 
 Here, _N_ is the number of processes you want to simulate.
 
-The test simply sends messages between the N processes.
+The test simply sends messages between the N processes. More info at [Provided test](Provided_test).
 
 ## Automated testing
 
@@ -49,11 +49,20 @@ Here's the link to the CI tester : https://drone.princelle.org/princelle/project
 
 ## How does it work?
 
+### Provided test
+
+The included test separates 'even' sites to 'uneven' ones:
+
+- All the 'even' sites receive a message from every 'uneven' ones then send back a message to each of them.
+- All the 'uneven' sites send a message to each 'even' sites then receive a message from each of them.
+
 ### Rules
 
 Here, we present a list of rules for each event when we use matrix clocks.
 
 #### Local progress rule
+
+-> not used in this case.
 
 before producing an internal event:
 

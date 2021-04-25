@@ -236,5 +236,5 @@ test(N) ->
     % This included test separates 'even' sites to 'uneven' ones:
     % - All the 'even' sites receive a message from every 'uneven' ones then send back a message to each of them.
     % - All the 'uneven' sites send a message to each 'even' sites then receive a message from each of them.
-    io:format("~nIn this test, there will be ~p procceses.~nWe separate 'even' ones from 'uneven' ones.~nTheir flow is predefined like this:~n- All the 'even' sites receive a message from every 'uneven' ones then send back a message to each of them.~n- All the 'uneven' sites send a message to each 'even' sites then receive a message from each of them.~n",[N]),
+    io:format("~nIn this test, there will be ~p procceses.~nWe separate 'even' ones from 'uneven' ones.~nTheir flow is predefined like this:~n  - All the 'even' sites receive a message from every 'uneven' ones then send back a message to each of them.~n  - All the 'uneven' sites send a message to each 'even' sites then receive a message from each of them.~n",[N]),
     initSite(N).

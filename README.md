@@ -31,8 +31,17 @@ erlc matrix_clocks.erl
 To run the provided test, enter:
 
 ```erlang
-erl
-matrix_clocks:test(N).
+erl % Enter the Erlang shell
+
+matrix_clocks:test(N). % Run the test
+
+init:stop(0). % Exit the shell
+```
+
+or:
+
+```bash
+erl -noshell -eval 'matrix_clocks:test(N), init:stop(0).'
 ```
 
 Here, _N_ is the number of processes you want to simulate.
@@ -44,6 +53,10 @@ The test simply sends messages between the N processes. More info at [Provided t
 [![Build Status](https://drone.princelle.org/api/badges/princelle/project-erlang/status.svg)](https://drone.princelle.org/princelle/project-erlang)
 
 Every time a push is made to the repository, a test is automatically executed to verify that the Erlang script still passes through the compiler.
+
+Then, one the step of the compiler is done, we run the test function with multiple scenarios to ensure that everything still passes. More info at [Provided test](#provided-test).
+
+To run the test, we use the following image: https://hub.docker.com/_/erlang. This allow us to have a clean environment everytime.
 
 Here's the link to the CI tester : https://drone.princelle.org/princelle/project-erlang
 
@@ -62,7 +75,7 @@ Here, we present a list of rules for each event when we use matrix clocks.
 
 #### Local progress rule
 
--> not used in this case.
+$` \rightarrow `$ not used in this case.
 
 before producing an internal event:
 
@@ -89,6 +102,15 @@ $` for \space each \space k \space do: `$
 $` \qquad C_i[k,*] \gets max(C_i[k,*], C[k,*]) `$
 
 $` endfor `$
+
+#### Functions and details
+
+If you want more details on the code, please checkout the comments made in the code itself. 
+
+I've detailed every single one with:
+- what it does,
+- how it works, and
+- how to use it.
 
 ## Assignment (FR)
 

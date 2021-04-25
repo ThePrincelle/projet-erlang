@@ -77,7 +77,7 @@ The included test separates 'even' sites to 'uneven' ones:
 
 Here, we present a list of rules for each event when we use matrix clocks.
 
-#### Local progress rule
+**Local progress rule**
 
 $` \rightarrow `$ not used in this case.
 
@@ -85,7 +85,7 @@ before producing an internal event:
 
 $` C_i[i,i] \gets C_i[i,i] +  1 `$
 
-#### Sending rule
+**Sending rule**
 
 when sending a message $`m`$ to $`P_j`$:
 
@@ -93,7 +93,7 @@ $` C_i[i,i] \gets C_i[i,i] + 1 `$
 
 $` send(m, C_i) \space to \space P_j `$
 
-#### Receiving rule
+**Receiving rule**
 
 when receiving a message ($`m`$, $`C`$) from $`P_j`$:
 

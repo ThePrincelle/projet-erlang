@@ -1,9 +1,24 @@
 kind: pipeline
 type: docker
-name: test-compile
+name: test-compile-run
 
 steps:
   - name: compile
     image: erlang
     commands:
       - erlc matrix_clocks.erl
+
+  - name: test-N_3
+    image: erlang
+    commands:
+      - erl -noshell -eval 'matrix_clocks:test(3), init:stop(0).'
+
+  - name: test-N_4
+    image: erlang
+    commands:
+      - erl -noshell -eval 'matrix_clocks:test(4), init:stop(0).'
+
+  - name: test-N_5
+    image: erlang
+    commands:
+      - erl -noshell -eval 'matrix_clocks:test(5), init:stop(0).'

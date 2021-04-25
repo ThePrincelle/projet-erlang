@@ -37,7 +37,7 @@ matrix_clocks:test(N).
 
 Here, _N_ is the number of processes you want to simulate.
 
-The test simply sends messages between the N processes. More info at [Provided test](Provided_test).
+The test simply sends messages between the N processes. More info at [Provided test](#provided-test).
 
 ## Automated testing
 

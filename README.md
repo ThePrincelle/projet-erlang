@@ -48,6 +48,8 @@ Here, _N_ is the number of processes you want to simulate.
 
 The test simply sends messages between the N processes. More info at [Provided test](#provided-test).
 
+<br/>
+
 ## Automated testing
 
 [![Build Status](https://drone.princelle.org/api/badges/princelle/project-erlang/status.svg)](https://drone.princelle.org/princelle/project-erlang)
@@ -59,6 +61,8 @@ Then, one the step of the compiler is done, we run the test function with multip
 To run the test, we use the following image: https://hub.docker.com/_/erlang. This allow us to have a clean environment everytime.
 
 Here's the link to the CI tester : https://drone.princelle.org/princelle/project-erlang
+
+<br/>
 
 ## How does it work?
 
@@ -111,6 +115,8 @@ I've detailed every single one with:
 - what it does,
 - how it works, and
 - how to use it.
+
+<br/>
 
 ## Assignment (FR)
 

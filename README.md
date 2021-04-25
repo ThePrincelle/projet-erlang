@@ -4,7 +4,7 @@
 
 Module simulating processes exchanging messages with matrix clocks.
 
-Author: [Maxime Princelle](https://contact.princelle.org)
+Author: [Maxime Princelle](https://contact.princelle.org) (M1, SIL)
 
 <br/>
 

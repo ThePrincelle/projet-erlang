@@ -103,7 +103,7 @@ $` \qquad C_i[k,*] \gets max(C_i[k,*], C[k,*]) `$
 
 $` endfor `$
 
-#### Functions and details
+### Functions and details
 
 If you want more details on the code, please checkout the comments made in the code itself. 
 

@@ -1,0 +1,30 @@
+name: Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Compile
+        run: docker run -v $PWD:/srv -w/srv erlang erlc matrix_clocks.erl
+        
+      - name: test-N_3
+        run: docker run -v $PWD:/srv -w/srv erlang erl -noshell -eval 'matrix_clocks:test(3), init:stop(0).'
+        
+      - name: test-N_4
+        run: docker run -v $PWD:/srv -w/srv erlang erl -noshell -eval 'matrix_clocks:test(4), init:stop(0).'
+        
+      - name: test-N_5
+        run: docker run -v $PWD:/srv -w/srv erlang erl -noshell -eval 'matrix_clocks:test(5), init:stop(0).'
+  

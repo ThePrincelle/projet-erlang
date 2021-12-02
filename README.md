@@ -1,16 +1,10 @@
 # Erlang project
 
-[![Build Status](https://drone.princelle.org/api/badges/princelle/project-erlang/status.svg)](https://drone.princelle.org/princelle/project-erlang)
+[![Tests](https://github.com/ThePrincelle/projet-erlang/actions/workflows/tests.yml/badge.svg)](https://github.com/ThePrincelle/projet-erlang/actions/workflows/tests.yml)
 
 Module simulating processes exchanging messages with matrix clocks.
 
 **Author:** [Maxime Princelle](https://contact.princelle.org) (M1 SIL)
-
-**Table of contents:**
-
-[[_TOC_]]
-
-<br/>
 
 ## How to make it work?
 

@@ -44,7 +44,7 @@ The test simply sends messages between the N processes. More info at [Provided t
 
 ## Automated testing
 
-[![Build Status](https://drone.princelle.org/api/badges/princelle/project-erlang/status.svg)](https://drone.princelle.org/princelle/project-erlang)
+[![Tests](https://github.com/ThePrincelle/projet-erlang/actions/workflows/tests.yml/badge.svg)](https://github.com/ThePrincelle/projet-erlang/actions/workflows/tests.yml)
 
 Every time a push is made to the repository, a test is automatically executed to verify that the Erlang script still passes through the compiler.
 
